@@ -144,6 +144,37 @@ test.describe("context", () => {
       await expect(value).toHaveText("Value: bar");
       await expect(value).toBeVisible();
     });
+
+    test("issue 5356", async ({ page }) => {
+      const btn1 = page.locator("#issue5356-button-1");
+      const btn2 = page.locator("#issue5356-button-2");
+      const btn3 = page.locator("#issue5356-button-3");
+      const child1 = page.locator("#issue5356-child-1");
+      const child2 = page.locator("#issue5356-child-2");
+      const child3 = page.locator("#issue5356-child-3");
+
+      await expect(child1).toContainText("Child 1, active: true");
+      await expect(child2).toContainText("Child 2, active: false");
+      await expect(child3).toContainText("Child 3, active: false");
+
+      await btn2.click();
+
+      await expect(child1).toContainText("Child 1, active: false");
+      await expect(child2).toContainText("Child 2, active: true");
+      await expect(child3).toContainText("Child 3, active: false");
+
+      await btn3.click();
+
+      await expect(child1).toContainText("Child 1, active: false");
+      await expect(child2).toContainText("Child 2, active: false");
+      await expect(child3).toContainText("Child 3, active: true");
+
+      await btn1.click();
+
+      await expect(child1).toContainText("Child 1, active: true");
+      await expect(child2).toContainText("Child 2, active: false");
+      await expect(child3).toContainText("Child 3, active: false");
+    });
   }
 
   test.beforeEach(async ({ page }) => {
